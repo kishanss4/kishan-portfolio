@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import emailjs from '@emailjs/browser';
 import { 
   Mail, 
   Phone, 
@@ -8,13 +9,19 @@ import {
   Linkedin, 
   MessageCircle,
   Clock,
-  CheckCircle
+  CheckCircle,
+  AlertCircle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
+
+// EmailJS Configuration
+const EMAILJS_SERVICE_ID = 'service_2ypb15e';
+const EMAILJS_TEMPLATE_ID = 'template_eje0dpu';
+const EMAILJS_PUBLIC_KEY = 'JghaQ89QB3zBrRkg2';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -25,6 +32,11 @@ const Contact = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+
+  // Initialize EmailJS
+  useEffect(() => {
+    emailjs.init(EMAILJS_PUBLIC_KEY);
+  }, []);
 
   const contactInfo = [
     {
@@ -85,15 +97,43 @@ const Contact = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate form submission
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      // Prepare template parameters for EmailJS
+      const templateParams = {
+        from_name: formData.name,
+        from_email: formData.email,
+        subject: formData.subject,
+        message: formData.message,
+        to_name: 'Kishan S S', // Your name
+      };
+
+      // Send email using EmailJS
+      const result = await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        templateParams,
+        EMAILJS_PUBLIC_KEY
+      );
+
+      if (result.status === 200) {
+        toast({
+          title: "Message Sent Successfully! 🎉",
+          description: "Thank you for reaching out. I'll get back to you within 24 hours!",
+        });
+        
+        // Reset form
+        setFormData({ name: '', email: '', subject: '', message: '' });
+      }
+    } catch (error) {
+      console.error('EmailJS Error:', error);
       toast({
-        title: "Message Sent!",
-        description: "Thank you for reaching out. I'll get back to you soon!",
+        variant: "destructive",
+        title: "Failed to Send Message",
+        description: "Something went wrong. Please try again or contact me directly at kishanss1804@gmail.com",
       });
-      setFormData({ name: '', email: '', subject: '', message: '' });
-    }, 2000);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -277,14 +317,30 @@ const Contact = () => {
                   </Button>
                 </form>
 
-                <div className="mt-6 p-4 rounded-lg bg-primary/5 border border-primary/20">
-                  <div className="flex items-start space-x-3">
-                    <CheckCircle className="text-primary mt-0.5" size={16} />
-                    <div className="text-sm">
-                      <p className="text-primary font-medium">Quick Response Guaranteed</p>
-                      <p className="text-muted-foreground">
-                        I typically respond within 24 hours. For urgent matters, feel free to call!
-                      </p>
+                <div className="mt-6 space-y-4">
+                  {/* Success Info */}
+                  <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
+                    <div className="flex items-start space-x-3">
+                      <CheckCircle className="text-primary mt-0.5" size={16} />
+                      <div className="text-sm">
+                        <p className="text-primary font-medium">Quick Response Guaranteed</p>
+                        <p className="text-muted-foreground">
+                          I typically respond within 24 hours. For urgent matters, feel free to call!
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* EmailJS Info */}
+                  <div className="p-4 rounded-lg bg-accent/5 border border-accent/20">
+                    <div className="flex items-start space-x-3">
+                      <Mail className="text-accent mt-0.5" size={16} />
+                      <div className="text-sm">
+                        <p className="text-accent font-medium">Direct Email Delivery</p>
+                        <p className="text-muted-foreground">
+                          Your message will be delivered directly to my inbox via secure email service.
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
