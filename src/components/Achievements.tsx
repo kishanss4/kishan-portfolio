@@ -25,7 +25,7 @@ const Achievements = () => {
     {
       title: "JVTM Participation",
       subtitle: "Bacti-Go Mobile App",
-      description: "Successfully participated in the JVTM (Junior Venture Technology Management) program with our healthcare mobile application.",
+      description: "Successfully participated in the JVTM (Jnana Vijnana Tantrajnana Mela) program with our healthcare mobile application.",
       icon: <Users className="text-accent" size={32} />,
       type: "program",
       year: "2024"
@@ -45,7 +45,7 @@ const Achievements = () => {
     { label: "Research Papers", value: "1", suffix: "" },
     { label: "Competition Wins", value: "1", suffix: "st Prize" },
     { label: "Hackathons", value: "6", suffix: "+" },
-    { label: "Projects Completed", value: "10", suffix: "+" }
+    { label: "Projects Completed", value: "6", suffix: "+" }
   ];
 
   return (

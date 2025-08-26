@@ -44,11 +44,17 @@ const Hero = () => {
             </p>
 
             {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row items-center gap-4">
-              <Button variant="hero" size="xl" className="group">
-                <Download className="mr-2 group-hover:animate-bounce" size={20} />
-                Download Resume
-              </Button>
+<div className="flex flex-col sm:flex-row items-center gap-4">
+  <a 
+    href="/Kishan's_Resume.pdf" 
+    download="Kishan-Resume.pdf" 
+    className="group"
+  >
+    <Button variant="hero" size="xl" className="group">
+      <Download className="mr-2 group-hover:animate-bounce" size={20} />
+      Download Resume
+    </Button>
+  </a>
               <Button variant="neon" size="xl" onClick={scrollToAbout}>
                 View My Work
                 <ArrowDown className="ml-2 animate-bounce" size={20} />
@@ -73,12 +79,7 @@ const Hero = () => {
               >
                 <Github className="text-primary group-hover:scale-110 transition-transform" size={24} />
               </a>
-              <a 
-                href="mailto:kishanss1804@gmail.com"
-                className="p-3 rounded-full bg-secondary/50 hover:bg-secondary transition-colors hover:shadow-glow group"
-              >
-                <Mail className="text-primary group-hover:scale-110 transition-transform" size={24} />
-              </a>
+              
             </div>
           </div>
 

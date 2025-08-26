@@ -81,10 +81,8 @@ const Footer = () => {
           <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
             {/* Copyright */}
             <div className="flex items-center space-x-1 text-sm text-muted-foreground">
-              <span>© {currentYear} Kishan S S. Made with</span>
-              <Heart className="text-red-500 animate-pulse" size={14} />
-              <span>and lots of</span>
-              <span className="text-primary">code</span>
+              <span>© {currentYear} Built by </span>
+              <span className="text-primary">Kishan SS</span>
             </div>
 
             {/* Tech Stack */}

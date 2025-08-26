@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import emailjs from '@emailjs/browser';
 import { 
   Mail, 
@@ -9,8 +9,7 @@ import {
   Linkedin, 
   MessageCircle,
   Clock,
-  CheckCircle,
-  AlertCircle
+  CheckCircle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -18,9 +17,9 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 
-// EmailJS Configuration
+// ✅ EmailJS Configuration
 const EMAILJS_SERVICE_ID = 'service_2ypb15e';
-const EMAILJS_TEMPLATE_ID = 'template_eje0dpu';
+const EMAILJS_TEMPLATE_ID = 'template_0vcadm8';
 const EMAILJS_PUBLIC_KEY = 'JghaQ89QB3zBrRkg2';
 
 const Contact = () => {
@@ -32,11 +31,6 @@ const Contact = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
-
-  // Initialize EmailJS
-  useEffect(() => {
-    emailjs.init(EMAILJS_PUBLIC_KEY);
-  }, []);
 
   const contactInfo = [
     {
@@ -78,12 +72,7 @@ const Contact = () => {
       icon: <Github size={20} />,
       color: "hover:bg-gray-700"
     },
-    {
-      name: "Email",
-      url: "mailto:kishanss1804@gmail.com",
-      icon: <Mail size={20} />,
-      color: "hover:bg-red-600"
-    }
+    
   ];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -98,16 +87,15 @@ const Contact = () => {
     setIsSubmitting(true);
 
     try {
-      // Prepare template parameters for EmailJS
+      // ✅ Match your EmailJS template variables
       const templateParams = {
         from_name: formData.name,
         from_email: formData.email,
         subject: formData.subject,
         message: formData.message,
-        to_name: 'Kishan S S', // Your name
+        to_name: 'Kishan S S',
       };
 
-      // Send email using EmailJS
       const result = await emailjs.send(
         EMAILJS_SERVICE_ID,
         EMAILJS_TEMPLATE_ID,
@@ -120,8 +108,6 @@ const Contact = () => {
           title: "Message Sent Successfully! 🎉",
           description: "Thank you for reaching out. I'll get back to you within 24 hours!",
         });
-        
-        // Reset form
         setFormData({ name: '', email: '', subject: '', message: '' });
       }
     } catch (error) {
@@ -129,7 +115,7 @@ const Contact = () => {
       toast({
         variant: "destructive",
         title: "Failed to Send Message",
-        description: "Something went wrong. Please try again or contact me directly at kishanss1804@gmail.com",
+        description: "Something went wrong. Please try again or email me directly at kishanss1804@gmail.com",
       });
     } finally {
       setIsSubmitting(false);
@@ -150,7 +136,7 @@ const Contact = () => {
             Get In <span className="gradient-text">Touch</span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Have a project in mind or want to collaborate? I'd love to hear from you!
+            Want to collaborate? I'd love to hear from you!
           </p>
         </div>
 
@@ -158,9 +144,7 @@ const Contact = () => {
           {/* Contact Information */}
           <div className="space-y-8 animate-fade-in">
             <div>
-              <h3 className="text-2xl font-bold gradient-text mb-6">
-                Let's Connect
-              </h3>
+              <h3 className="text-2xl font-bold gradient-text mb-6">Let's Connect</h3>
               <p className="text-muted-foreground leading-relaxed mb-8">
                 I'm always excited to discuss new opportunities, innovative projects, or just chat 
                 about technology and AI. Whether you're looking for a collaborator, have a question 
@@ -174,9 +158,7 @@ const Contact = () => {
                 <Card key={index} className="card-hover neon-border bg-card/50 backdrop-blur-sm">
                   <CardContent className="p-6">
                     <div className="flex items-start space-x-4">
-                      <div className="p-2 rounded-lg bg-secondary/50">
-                        {info.icon}
-                      </div>
+                      <div className="p-2 rounded-lg bg-secondary/50">{info.icon}</div>
                       <div className="space-y-1">
                         <h4 className="font-semibold text-foreground">{info.title}</h4>
                         <p className="text-sm text-primary font-medium">{info.content}</p>
@@ -226,16 +208,12 @@ const Contact = () => {
           <div className="animate-fade-in" style={{ animationDelay: '0.2s' }}>
             <Card className="neon-border bg-card/50 backdrop-blur-sm">
               <CardContent className="p-8">
-                <h3 className="text-2xl font-bold gradient-text mb-6">
-                  Send Message
-                </h3>
+                <h3 className="text-2xl font-bold gradient-text mb-6">Send Message</h3>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <label htmlFor="name" className="text-sm font-medium text-foreground">
-                        Full Name *
-                      </label>
+                      <label htmlFor="name" className="text-sm font-medium text-foreground">Full Name *</label>
                       <Input
                         id="name"
                         name="name"
@@ -248,9 +226,7 @@ const Contact = () => {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label htmlFor="email" className="text-sm font-medium text-foreground">
-                        Email Address *
-                      </label>
+                      <label htmlFor="email" className="text-sm font-medium text-foreground">Email Address *</label>
                       <Input
                         id="email"
                         name="email"
@@ -265,9 +241,7 @@ const Contact = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <label htmlFor="subject" className="text-sm font-medium text-foreground">
-                      Subject *
-                    </label>
+                    <label htmlFor="subject" className="text-sm font-medium text-foreground">Subject *</label>
                     <Input
                       id="subject"
                       name="subject"
@@ -281,9 +255,7 @@ const Contact = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <label htmlFor="message" className="text-sm font-medium text-foreground">
-                      Message *
-                    </label>
+                    <label htmlFor="message" className="text-sm font-medium text-foreground">Message *</label>
                     <Textarea
                       id="message"
                       name="message"
@@ -317,8 +289,8 @@ const Contact = () => {
                   </Button>
                 </form>
 
+                {/* Info Section */}
                 <div className="mt-6 space-y-4">
-                  {/* Success Info */}
                   <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
                     <div className="flex items-start space-x-3">
                       <CheckCircle className="text-primary mt-0.5" size={16} />
@@ -331,7 +303,6 @@ const Contact = () => {
                     </div>
                   </div>
 
-                  {/* EmailJS Info */}
                   <div className="p-4 rounded-lg bg-accent/5 border border-accent/20">
                     <div className="flex items-start space-x-3">
                       <Mail className="text-accent mt-0.5" size={16} />
