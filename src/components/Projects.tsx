@@ -70,7 +70,7 @@ const Projects = () => {
       technologies: ["Python", "TensorFlow", "OpenCV", "CNN", "RNN"],
       image: "/images/deepfake.jpg",
       links: {
-        github: "https://github.com/kishanss4/deepfake-detection",
+        github: "https://github.com/kishanss4/deepfake-detection-project",
         demo: "https://youtu.be/DKCY2cx-Okw",
       },
       featured: true,
