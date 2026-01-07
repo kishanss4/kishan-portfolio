@@ -91,7 +91,7 @@ const Projects = () => {
       category: "web",
       description:
         "Web platform connecting food donors with NGOs and individuals in need, reducing food waste and hunger.",
-      technologies: ["React", "Node.js", "MongoDB", "Express", "Google Maps API"],
+      technologies: ["React", "Node.js", "MongoDB", "Express", "Leaflet Maps API"],
       image: "/images/vital-link.png",
       links: {
         github: "https://github.com/kishanss4/vital-link",
@@ -107,6 +107,18 @@ const Projects = () => {
       technologies: ["Arduino", "Servo Motors", "LDR Sensors", "C++"],
       images: ["/images/solar1.jpg", "/images/solar2.jpg", "/images/solar3.jpg"],
       links: { github: "https://github.com/kishanss4/solar-tracking-system-arduino" },
+    },
+    {
+      id: 7,
+      title: "Corrupt Watch",
+      category: "web",
+      description:
+        "An AI–Blockchain Integrated Framework for Transparent Civic Grievance Redressal",
+      technologies: ["Blockchain", "Artificial Intelligence", "Leaflet Maps API", "Python"],
+      image: "/images/corrupt.png",
+      links: { 
+        github: "https://github.com/kishanss4/corrupt-watch",
+        demo: "https://corruptwatch.vercel.app/" },
     },
   ];
 
