@@ -105,7 +105,7 @@ const Projects = () => {
       description:
         "Automated solar panel positioning system that follows the sun's movement to maximize energy efficiency.",
       technologies: ["Arduino", "Servo Motors", "LDR Sensors", "C++"],
-      images: ["/images/solar1.jpg", "/images/solar2.jpg"],
+      images: ["/images/solar1.jpg", "/images/solar2.jpg", "/images/solar3.jpg"],
       links: { github: "https://github.com/kishanss4/solar-tracking-system-arduino" },
     },
   ];
