@@ -82,7 +82,7 @@ const Projects = () => {
       description:
         "Healthcare mobile application for bacteria identification and treatment recommendations. Participated in JVTM competition.",
       technologies: ["Android", "Java", "Machine Learning", "Image Processing"],
-      image: "/images/bacti.png",
+      images: ["/images/bacti1.png", "/images/bacti2.png", "/images/bacti3.png", "/images/bacti4.png", "/images/bacti5.png"],
       links: { github: "https://github.com/kishanss4/bacti-go", apk: "#" },
     },
     {
