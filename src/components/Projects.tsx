@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   ExternalLink,
   Github,
@@ -6,8 +6,8 @@ import {
   Globe,
   Cpu,
   Play,
-  Image as ImageIcon,
 } from "lucide-react";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -23,16 +23,65 @@ import {
   CarouselPrevious,
   CarouselNext,
 } from "@/components/ui/carousel";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
+
+// 3D Tilt Card wrapper
+const TiltCard = ({ children, className, style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) => {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [transform, setTransform] = useState('perspective(1000px) rotateX(0deg) rotateY(0deg)');
+  const [glowPosition, setGlowPosition] = useState({ x: 50, y: 50 });
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width;
+    const y = (e.clientY - rect.top) / rect.height;
+    const rotateX = (y - 0.5) * -8;
+    const rotateY = (x - 0.5) * 8;
+    setTransform(`perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`);
+    setGlowPosition({ x: x * 100, y: y * 100 });
+  };
+
+  const handleMouseLeave = () => {
+    setTransform('perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)');
+    setGlowPosition({ x: 50, y: 50 });
+  };
+
+  return (
+    <div
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      className={className}
+      style={{
+        ...style,
+        transform,
+        transition: 'transform 0.3s ease',
+        transformStyle: 'preserve-3d',
+      }}
+    >
+      {/* Glow follow effect */}
+      <div
+        className="absolute inset-0 rounded-lg opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-none z-10"
+        style={{
+          background: `radial-gradient(circle at ${glowPosition.x}% ${glowPosition.y}%, hsl(var(--primary) / 0.15), transparent 50%)`,
+        }}
+      />
+      {children}
+    </div>
+  );
+};
 
 const Projects = () => {
   const [activeCategory, setActiveCategory] = useState("all");
-  const [openCarousel, setOpenCarousel] = useState<number | null>(null);
+  const { ref: headerRef, isInView: headerInView } = useScrollReveal({ threshold: 0.2 });
+  const { ref: gridRef, isInView: gridInView } = useScrollReveal({ threshold: 0.05 });
 
   const categories = [
-    { id: "all", label: "All Projects", icon: <Globe size={18} /> },
-    { id: "apps", label: "Mobile Apps", icon: <Smartphone size={18} /> },
-    { id: "web", label: "Web Apps", icon: <Globe size={18} /> },
-    { id: "hardware", label: "Hardware", icon: <Cpu size={18} /> },
+    { id: "all", label: "All Projects", icon: <Globe size={16} /> },
+    { id: "apps", label: "Mobile Apps", icon: <Smartphone size={16} /> },
+    { id: "web", label: "Web Apps", icon: <Globe size={16} /> },
+    { id: "hardware", label: "Hardware", icon: <Cpu size={16} /> },
   ];
 
   const projects = [
@@ -116,9 +165,10 @@ const Projects = () => {
         "An AI–Blockchain Integrated Framework for Transparent Civic Grievance Redressal",
       technologies: ["Blockchain", "Artificial Intelligence", "Leaflet Maps API", "Python"],
       image: "/images/corrupt.png",
-      links: { 
+      links: {
         github: "https://github.com/kishanss4/corrupt-watch",
-        demo: "https://corruptwatch.vercel.app/" },
+        demo: "https://corruptwatch.vercel.app/",
+      },
     },
   ];
 
@@ -128,174 +178,221 @@ const Projects = () => {
       : projects.filter((p) => p.category === activeCategory);
 
   return (
-    <section id="projects" className="py-20 relative overflow-hidden">
+    <section id="projects" className="py-24 relative overflow-hidden">
       {/* Background Effects */}
-      <div className="absolute inset-0">
-        <div className="absolute top-1/4 right-0 w-80 h-80 bg-primary/5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-1/4 left-0 w-96 h-96 bg-accent/5 rounded-full blur-3xl"></div>
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/4 right-0 w-80 h-80 bg-primary/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 left-0 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
       </div>
 
       <div className="container mx-auto px-6 relative z-10">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+        {/* Header */}
+        <motion.div
+          ref={headerRef}
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 40 }}
+          animate={headerInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
             My <span className="gradient-text">Projects</span>
           </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
             A collection of innovative solutions spanning mobile apps, web
             platforms, and hardware projects
           </p>
-        </div>
+        </motion.div>
 
         {/* Category Filter */}
-        <div className="flex flex-wrap items-center justify-center gap-4 mb-12">
+        <motion.div
+          className="flex flex-wrap items-center justify-center gap-3 mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          animate={headerInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 0.3, duration: 0.6 }}
+        >
           {categories.map((cat) => (
-            <Button
-              key={cat.id}
-              variant={activeCategory === cat.id ? "hero" : "neon"}
-              size="sm"
-              onClick={() => setActiveCategory(cat.id)}
-              className="transition-all duration-300"
-            >
-              {cat.icon}
-              <span className="ml-2">{cat.label}</span>
-            </Button>
+            <motion.div key={cat.id} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button
+                variant={activeCategory === cat.id ? "hero" : "neon"}
+                size="sm"
+                onClick={() => setActiveCategory(cat.id)}
+                className="transition-all duration-300"
+              >
+                {cat.icon}
+                <span className="ml-2">{cat.label}</span>
+              </Button>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {/* Projects Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div ref={gridRef} className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {filteredProjects.map((project, index) => {
             const hasImages = Array.isArray((project as any).images) && (project as any).images.length > 0;
             const hasSingleImage = (project as any).image;
 
             return (
-              <Card
+              <motion.div
                 key={project.id}
-                className={`card-hover neon-border bg-card/50 backdrop-blur-sm overflow-hidden group animate-fade-in ${
-                  project.featured ? "md:col-span-2 lg:col-span-1" : ""
-                }`}
-                style={{ animationDelay: `${index * 0.1}s` }}
+                initial={{ opacity: 0, y: 40 }}
+                animate={gridInView ? { opacity: 1, y: 0 } : {}}
+                transition={{
+                  delay: index * 0.1,
+                  duration: 0.6,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
+                layout
               >
-                {/* Images / Single Image / Placeholder */}
-                {hasImages ? (
-                  <div className="relative h-48 bg-gradient-secondary">
-                    <Carousel className="w-full h-48">
-                      <CarouselContent>
-                        {(project as any).images.map((img: string, i: number) => (
-                          <CarouselItem key={i}>
-                            <img
-                              src={img}
-                              alt={`${project.title} ${i + 1}`}
-                              className="object-cover w-full h-48"
-                            />
-                          </CarouselItem>
-                        ))}
-                      </CarouselContent>
-                      {project.images.length > 1 && (
-                        <>
-                          <CarouselPrevious className="left-2 top-1/2 -translate-y-1/2 z-10 bg-black/50 text-white rounded-full" />
-                          <CarouselNext className="right-2 top-1/2 -translate-y-1/2 z-10 bg-black/50 text-white rounded-full" />
-                        </>
-                      )}
-                    </Carousel>
-                  </div>
-                ) : hasSingleImage ? (
-                  <div className="relative h-48">
-                    <img
-                      src={(project as any).image}
-                      alt={project.title}
-                      className="object-cover w-full h-48"
-                    />
-                  </div>
-                ) : (
-                  <div className="relative h-48 bg-gradient-secondary overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-primary opacity-20"></div>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="text-6xl opacity-20">
-                        {project.category === "apps" && <Smartphone />}
-                        {project.category === "web" && <Globe />}
-                        {project.category === "hardware" && <Cpu />}
+                <TiltCard className="relative h-full">
+                  <Card
+                    className={`neon-border bg-card/50 backdrop-blur-sm overflow-hidden group h-full flex flex-col ${
+                      project.featured ? "ring-1 ring-primary/20" : ""
+                    }`}
+                  >
+                    {/* Featured badge */}
+                    {project.featured && (
+                      <div className="absolute top-3 right-3 z-20">
+                        <Badge className="bg-primary/90 text-primary-foreground text-[10px] uppercase tracking-wider">
+                          Featured
+                        </Badge>
                       </div>
-                    </div>
-                  </div>
-                )}
-
-               
-
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    <span className="gradient-text">{project.title}</span>
-                  </CardTitle>
-                </CardHeader>
-
-                <CardContent className="space-y-4">
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {project.description}
-                  </p>
-
-                  {/* Technologies */}
-                  <div className="flex flex-wrap gap-2">
-                    {project.technologies.map((tech, i) => (
-                      <Badge
-                        key={i}
-                        variant="secondary"
-                        className="text-xs bg-secondary/50 hover:bg-secondary transition-colors"
-                      >
-                        {tech}
-                      </Badge>
-                    ))}
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="flex items-center space-x-2 pt-2">
-                    {"demo" in project.links && project.links.demo && (
-                      <a href={project.links.demo} target="_blank" rel="noopener noreferrer" className="flex-1">
-                        <Button variant="gradient" size="sm" className="w-full">
-                          <ExternalLink className="mr-2" size={14} />
-                          Demo
-                        </Button>
-                      </a>
                     )}
-                    {"github" in project.links && project.links.github && (
-                      <a href={project.links.github} target="_blank" rel="noopener noreferrer" className="flex-1">
-                        <Button variant="neon" size="sm" className="w-full">
-                          <Github className="mr-2" size={14} />
-                          Code
-                        </Button>
-                      </a>
+
+                    {/* Images / Single Image / Placeholder */}
+                    {hasImages ? (
+                      <div className="relative h-48 bg-gradient-secondary overflow-hidden">
+                        <Carousel className="w-full h-48">
+                          <CarouselContent>
+                            {(project as any).images.map((img: string, i: number) => (
+                              <CarouselItem key={i}>
+                                <img
+                                  src={img}
+                                  alt={`${project.title} ${i + 1}`}
+                                  className="object-cover w-full h-48 transition-transform duration-700 group-hover:scale-110"
+                                />
+                              </CarouselItem>
+                            ))}
+                          </CarouselContent>
+                          {project.images && project.images.length > 1 && (
+                            <>
+                              <CarouselPrevious className="left-2 top-1/2 -translate-y-1/2 z-10 bg-black/50 text-white rounded-full border-0 h-8 w-8" />
+                              <CarouselNext className="right-2 top-1/2 -translate-y-1/2 z-10 bg-black/50 text-white rounded-full border-0 h-8 w-8" />
+                            </>
+                          )}
+                        </Carousel>
+                        {/* Hover overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                      </div>
+                    ) : hasSingleImage ? (
+                      <div className="relative h-48 overflow-hidden">
+                        <img
+                          src={(project as any).image}
+                          alt={project.title}
+                          className="object-cover w-full h-48 transition-transform duration-700 group-hover:scale-110"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                      </div>
+                    ) : (
+                      <div className="relative h-48 bg-gradient-secondary overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-primary opacity-10 group-hover:opacity-20 transition-opacity" />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="text-6xl opacity-20 group-hover:opacity-30 transition-opacity group-hover:scale-110 duration-500">
+                            {project.category === "apps" && <Smartphone />}
+                            {project.category === "web" && <Globe />}
+                            {project.category === "hardware" && <Cpu />}
+                          </div>
+                        </div>
+                      </div>
                     )}
-                    {"apk" in project.links && project.links.apk && (
-                      <a href={project.links.apk} target="_blank" rel="noopener noreferrer" className="flex-1">
-                        <Button variant="neon" size="sm" className="w-full">
-                          <Smartphone className="mr-2" size={14} />
-                          APK
-                        </Button>
-                      </a>
-                    )}
-                    {"video" in project.links && project.links.video && (
-                      <a href={project.links.video} target="_blank" rel="noopener noreferrer" className="flex-1">
-                        <Button variant="hero" size="sm" className="w-full">
-                          <Play className="mr-2" size={14} />
-                          Watch Video
-                        </Button>
-                      </a>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
+
+                    <CardHeader className="pb-3">
+                      <CardTitle className="flex items-center justify-between">
+                        <span className="gradient-text text-lg">{project.title}</span>
+                      </CardTitle>
+                    </CardHeader>
+
+                    <CardContent className="space-y-4 flex-1 flex flex-col">
+                      <p className="text-sm text-muted-foreground leading-relaxed flex-1">
+                        {project.description}
+                      </p>
+
+                      {/* Technologies */}
+                      <div className="flex flex-wrap gap-1.5">
+                        {project.technologies.map((tech, i) => (
+                          <Badge
+                            key={i}
+                            variant="secondary"
+                            className="text-[11px] bg-secondary/50 hover:bg-secondary transition-colors px-2 py-0.5"
+                          >
+                            {tech}
+                          </Badge>
+                        ))}
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="flex items-center gap-2 pt-2">
+                        {"demo" in project.links && project.links.demo && (
+                          <a href={project.links.demo} target="_blank" rel="noopener noreferrer" className="flex-1">
+                            <Button variant="gradient" size="sm" className="w-full text-xs">
+                              <ExternalLink className="mr-1.5" size={13} />
+                              Demo
+                            </Button>
+                          </a>
+                        )}
+                        {"github" in project.links && project.links.github && (
+                          <a href={project.links.github} target="_blank" rel="noopener noreferrer" className="flex-1">
+                            <Button variant="neon" size="sm" className="w-full text-xs">
+                              <Github className="mr-1.5" size={13} />
+                              Code
+                            </Button>
+                          </a>
+                        )}
+                        {"apk" in project.links && project.links.apk && (
+                          <a href={project.links.apk} target="_blank" rel="noopener noreferrer" className="flex-1">
+                            <Button variant="neon" size="sm" className="w-full text-xs">
+                              <Smartphone className="mr-1.5" size={13} />
+                              APK
+                            </Button>
+                          </a>
+                        )}
+                        {"video" in project.links && project.links.video && (
+                          <a href={project.links.video} target="_blank" rel="noopener noreferrer" className="flex-1">
+                            <Button variant="hero" size="sm" className="w-full text-xs">
+                              <Play className="mr-1.5" size={13} />
+                              Watch
+                            </Button>
+                          </a>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TiltCard>
+              </motion.div>
             );
           })}
         </div>
 
         {/* View More Button */}
-        <div className="text-center mt-12">
-          <a href="https://github.com/kishanss4" target="_blank" rel="noopener noreferrer">
+        <motion.div
+          className="text-center mt-14"
+          initial={{ opacity: 0, y: 20 }}
+          animate={gridInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 0.8, duration: 0.6 }}
+        >
+          <motion.a
+            href="https://github.com/kishanss4"
+            target="_blank"
+            rel="noopener noreferrer"
+            whileHover={{ scale: 1.05, y: -3 }}
+            whileTap={{ scale: 0.95 }}
+            className="inline-block"
+          >
             <Button variant="hero" size="lg">
               <Github className="mr-2" size={20} />
               View All Projects on GitHub
             </Button>
-          </a>
-        </div>
+          </motion.a>
+        </motion.div>
       </div>
     </section>
   );
