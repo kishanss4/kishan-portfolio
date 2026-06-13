@@ -66,7 +66,7 @@ const Achievements = () => {
   ];
 
   const stats = [
-    { label: "Research Papers", value: 1, suffix: "" },
+    { label: "Research Papers", value: 3, suffix: "" },
     { label: "Competition Wins", value: 1, suffix: "st Prize" },
     { label: "Hackathons", value: 6, suffix: "+" },
     { label: "Projects Completed", value: 6, suffix: "+" }

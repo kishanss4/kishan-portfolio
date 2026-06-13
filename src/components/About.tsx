@@ -13,7 +13,7 @@ const About = () => {
     {
       degree: "BE in Computer Science & Engineering (AI & DS)",
       institution: "BGS College of Engineering and Technology (VTU)",
-      grade: "CGPA: 8.76",
+      grade: "CGPA: 8.98",
       period: "2021 - 2025",
       icon: <GraduationCap className="text-primary" size={24} />,
     },
